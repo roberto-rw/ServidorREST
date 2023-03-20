@@ -5,6 +5,7 @@
 package clienterest;
 
 import clientes.ClientePersonaje;
+import entidadesrest.Personaje;
 
 import javax.ws.rs.core.Response;
 
@@ -18,8 +19,9 @@ public class ClienteREST {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Personaje personaje= new Personaje("Capitan Magma", "Bob Esponja");
         ClientePersonaje cp = new ClientePersonaje();
-        Response r = cp.deletePersonaje("24");
+        Response r = cp.postPersonaje(personaje);
 
         System.out.println(r.getStatus());
         System.out.println(r.readEntity(String.class));

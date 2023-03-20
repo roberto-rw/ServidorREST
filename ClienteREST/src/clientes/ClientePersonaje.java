@@ -5,10 +5,12 @@
 package clientes;
 
 import entidadesrest.Personaje;
+import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -40,24 +42,24 @@ public class ClientePersonaje {
         return webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete(Response.class);
     }
 
-    public Response getPersonajes() throws ClientErrorException {
+    public List<Personaje> getPersonajes() throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("todos");
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(Response.class);
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(new GenericType<List<Personaje>>(){});
     }
 
-    public Response getPersonajeBySerie(String serie) throws ClientErrorException {
+    public List<Personaje> getPersonajeBySerie(String serie) throws ClientErrorException {
         WebTarget resource = webTarget;
         if (serie != null) {
             resource = resource.queryParam("serie", serie);
         }
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(Response.class);
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(new GenericType<List<Personaje>>(){});
     }
 
-    public Response getPersonajeById(String id) throws ClientErrorException {
+    public Personaje getPersonajeById(String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(Response.class);
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(Personaje.class);
     }
 
     public Response updatePersonaje(Long id, String nombre, String serie) throws ClientErrorException {
@@ -67,14 +69,14 @@ public class ClientePersonaje {
                         .queryParam("nombre", nombre)
                         .queryParam("serie", serie)
                         .request()
-                        .post(Entity.entity(personaje, MediaType.APPLICATION_JSON), Response.class);
+                        .put(Entity.entity(personaje, MediaType.APPLICATION_JSON), Response.class);
     }
 
-    public Response postPersonaje(String nombre, String serie) throws ClientErrorException {
-        Personaje personaje = new Personaje(nombre, serie);
+    public Response postPersonaje(Personaje personaje) throws ClientErrorException {
+        //Personaje personaje = new Personaje(nombre, serie);
         return webTarget
-                        .queryParam("nombre", nombre)
-                        .queryParam("serie", serie)
+                        .queryParam("nombre", personaje.getNombre())
+                        .queryParam("serie", personaje.getSerie())
                         .request()
                         .post(Entity.entity(personaje, MediaType.APPLICATION_JSON), Response.class);
     
